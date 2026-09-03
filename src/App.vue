@@ -26,15 +26,30 @@ import {
   Sparkles,
   TrendingUp,
   CircleHelp,
+  User,
+  LogIn,
+  Mail,
+  Lock,
+  ShieldCheck,
+  Settings,
 } from "lucide-vue-next";
 
-type Section = "Dashboard" | "Grades" | "Attendance" | "Tuition" | "Statistics";
+type Section =
+  | "Dashboard"
+  | "Grades"
+  | "Attendance"
+  | "Tuition"
+  | "Statistics"
+  | "Account"
+  | "Login";
 const sectionLabels: Record<Section, string> = {
   Dashboard: "Tableau de bord",
   Grades: "Notes",
   Attendance: "Présences",
   Tuition: "Frais de scolarité",
   Statistics: "Statistiques",
+  Account: "Compte",
+  Login: "Connexion",
 };
 const active = ref<Section>("Dashboard");
 const mobileOpen = ref(false);
@@ -52,6 +67,8 @@ const sections: { name: Section; icon: any }[] = [
   { name: "Attendance", icon: CalendarCheck },
   { name: "Tuition", icon: WalletCards },
   { name: "Statistics", icon: ChartNoAxesCombined },
+  { name: "Account", icon: User },
+  { name: "Login", icon: LogIn },
 ];
 const students = [
   {
@@ -114,6 +131,51 @@ const nav = (name: Section) => {
   active.value = name;
   mobileOpen.value = false;
 };
+const activeTitle = computed(() => {
+  const titles: Record<Section, string> = {
+    Dashboard: "Bonjour Jordan",
+    Grades: "Notes",
+    Attendance: "Présences",
+    Tuition: "Frais de scolarité",
+    Statistics: "Statistiques",
+    Account: "Compte",
+    Login: "Connexion",
+  };
+
+  return titles[active.value];
+});
+const activeEyebrow = computed(() =>
+  active.value === "Dashboard" ? "Mardi 24 octobre 2024" : "Vue d’ensemble de l’espace de travail"
+);
+const activeSubheading = computed(() => {
+  const subjects: Record<Exclude<Section, "Dashboard" | "Account" | "Login">, string> = {
+    Grades: "notes",
+    Attendance: "présences",
+    Tuition: "frais de scolarité",
+    Statistics: "statistiques",
+  };
+
+  if (active.value === "Dashboard") {
+    return "Voici ce qui se passe dans votre établissement aujourd’hui.";
+  }
+
+  if (active.value === "Account") {
+    return "Gérez les informations, la sécurité et les préférences du profil administrateur.";
+  }
+
+  if (active.value === "Login") {
+    return "Connectez-vous à l’espace d’administration de votre établissement.";
+  }
+
+  return `Suivez et gérez les ${subjects[active.value]} de votre établissement au même endroit.`;
+});
+const primaryActionLabel = computed(() => {
+  if (active.value === "Attendance") return "Faire l’appel";
+  if (active.value === "Login") return "Se connecter";
+  if (active.value === "Account") return "Enregistrer";
+
+  return "Ajouter";
+});
 onMounted(() => {
   gsap.from(".app-shell", { opacity: 0, y: 12, duration: 0.55, ease: "power2.out" });
 });
@@ -181,27 +243,15 @@ onMounted(() => {
         ><div :key="active" class="page-wrap">
           <section class="page-heading">
             <div>
-              <p class="eyebrow">
-                {{
-                  active === "Dashboard"
-                    ? "Mardi 24 octobre 2024"
-                    : "Vue d’ensemble de l’espace de travail"
-                }}
-              </p>
-              <h1>{{ active === "Dashboard" ? "Bonjour Jordan" : active === "Grades" ? "Notes" : active === "Attendance" ? "Présences" : active === "Tuition" ? "Frais de scolarité" : "Statistiques" }}</h1>
-              <p class="subheading">
-                {{
-                  active === "Dashboard"
-                    ? "Voici ce qui se passe dans votre établissement aujourd’hui."
-                    : `Suivez et gérez les ${active === "Grades" ? "notes" : active === "Attendance" ? "présences" : active === "Tuition" ? "frais de scolarité" : "statistiques"} de votre établissement au même endroit.`
-                }}
-              </p>
+              <p class="eyebrow">{{ activeEyebrow }}</p>
+              <h1>{{ activeTitle }}</h1>
+              <p class="subheading">{{ activeSubheading }}</p>
             </div>
-            <div class="heading-actions">
+            <div v-if="active !== 'Login'" class="heading-actions">
               <button class="button ghost"><Download :size="16" /> Exporter</button>
               <button class="button primary">
                 <Plus :size="17" />
-                {{ active === "Attendance" ? "Faire l’appel" : "Ajouter" }}
+                {{ primaryActionLabel }}
               </button>
             </div>
           </section>
@@ -211,7 +261,7 @@ onMounted(() => {
                 <div class="kpi-icon indigo"><Users :size="19" /></div>
                 <div class="kpi-title">Total des élèves <ArrowUpRight :size="15" /></div>
                 <strong>1,248</strong>
-                <p><b class="up">+8.2%</b> <span>Ce mois-ci</span></p>
+                <p><b class="up">+8.2%</b> <span class="period-mobile">Ce mois-ci</span><span class="period-desktop">Par rapport au dernier mois</span></p>
                 <div class="sparkline indigo-line">
                   <span
                     v-for="h in [20, 27, 22, 34, 28, 42, 37, 51, 44, 61, 56, 75]"
@@ -224,7 +274,7 @@ onMounted(() => {
                 <div class="kpi-icon emerald"><UserRoundCheck :size="19" /></div>
                 <div class="kpi-title">Taux de présence <ArrowUpRight :size="15" /></div>
                 <strong>94.8%</strong>
-                <p><b class="up">+1.6%</b> <span>Ce mois-ci</span></p>
+                <p><b class="up">+1.6%</b> <span class="period-mobile">Ce mois-ci</span><span class="period-desktop">Par rapport au dernier mois</span></p>
                 <div class="sparkline green-line">
                   <span
                     v-for="h in [34, 45, 38, 49, 42, 57, 48, 63, 57, 69, 64, 78]"
@@ -237,7 +287,7 @@ onMounted(() => {
                 <div class="kpi-icon amber"><CircleDollarSign :size="19" /></div>
                 <div class="kpi-title">Frais collectés <ArrowUpRight :size="15" /></div>
                 <strong>$428,650</strong>
-                <p><b class="up">+12.4%</b> <span>Ce mois-ci</span></p>
+                <p><b class="up">+12.4%</b> <span class="period-mobile">Ce mois-ci</span><span class="period-desktop">Par rapport au dernier mois</span></p>
                 <div class="ring-wrap">
                   <svg viewBox="0 0 42 42">
                     <circle class="ring-bg" cx="21" cy="21" r="15.5" />
@@ -576,6 +626,80 @@ onMounted(() => {
                 ><span><i class="key-amber"></i>Impayé</span>
               </div>
             </article>
+          </section>
+          <section v-else-if="active === 'Account'" class="account-view">
+            <article class="panel profile-panel">
+              <div class="account-hero">
+                <div class="avatar profile-avatar">JD</div>
+                <div>
+                  <h2>Jordan Davis</h2>
+                  <p>Administrateur scolaire · Masomo Academy</p>
+                </div>
+                <button class="select-button"><Settings :size="15" /> Préférences</button>
+              </div>
+              <div class="profile-grid">
+                <label>
+                  <span>Nom complet</span>
+                  <input value="Jordan Davis" />
+                </label>
+                <label>
+                  <span>Email</span>
+                  <input value="jordan.davis@masomo.ac" />
+                </label>
+                <label>
+                  <span>Rôle</span>
+                  <input value="Administrateur scolaire" />
+                </label>
+                <label>
+                  <span>Établissement</span>
+                  <input value="Masomo Academy" />
+                </label>
+              </div>
+            </article>
+            <article class="panel security-panel">
+              <div class="panel-head">
+                <div>
+                  <h2>Sécurité du compte</h2>
+                  <p>Accès, sessions et authentification</p>
+                </div>
+                <ShieldCheck :size="20" />
+              </div>
+              <div class="security-list">
+                <div><span>Authentification à deux facteurs</span><b>Activée</b></div>
+                <div><span>Dernière connexion</span><b>Aujourd’hui · 09 h 24</b></div>
+                <div><span>Session active</span><b>Lubumbashi · Chrome</b></div>
+              </div>
+            </article>
+          </section>
+          <section v-else-if="active === 'Login'" class="login-view">
+            <article class="panel login-panel">
+              <div class="login-head">
+                <div class="brand-mark compact-mark">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <div>
+                  <h2>Connexion administrateur</h2>
+                  <p>Accédez au tableau de bord Geschoool.</p>
+                </div>
+              </div>
+              <form class="login-form">
+                <label>
+                  <span>Email ou identifiant</span>
+                  <div><Mail :size="16" /><input type="email" placeholder="jordan.davis@masomo.ac" /></div>
+                </label>
+                <label>
+                  <span>Mot de passe</span>
+                  <div><Lock :size="16" /><input type="password" placeholder="••••••••" /></div>
+                </label>
+                <button class="button primary" type="button"><LogIn :size="16" /> Se connecter</button>
+              </form>
+            </article>
+            <aside class="login-side">
+              <strong>Masomo Academy</strong>
+              <span>1 248 élèves suivis · 94.8% de présence aujourd’hui</span>
+            </aside>
           </section>
           <section v-else class="stats-view">
             <div class="stats-cards">
