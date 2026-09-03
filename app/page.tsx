@@ -40,7 +40,7 @@ export default function Page() {
           color: 'light-dark(#71717a, #a1a1aa)',
         }}
       >
-        Your v0 generation will show here.
+        Votre génération v0 apparaîtra ici.
       </p>
     </main>
   )
