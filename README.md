@@ -6,3 +6,6 @@ Front-End SaaS de suivi scolaire.
     - Tailwindcss
     - Typescript
     - Node.Js
+
+## Installation et démarrage
+

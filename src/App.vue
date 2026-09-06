@@ -45,7 +45,7 @@ type Section =
 const sectionLabels: Record<Section, string> = {
   Dashboard: "Tableau de bord",
   Grades: "Notes",
-  Attendance: "Présences",
+  Attendance: "Révue",
   Tuition: "Frais de scolarité",
   Statistics: "Statistiques",
   Account: "Compte",
@@ -145,7 +145,9 @@ const activeTitle = computed(() => {
   return titles[active.value];
 });
 const activeEyebrow = computed(() =>
-  active.value === "Dashboard" ? "Mardi 24 octobre 2024" : "Vue d’ensemble de l’espace de travail"
+  active.value === "Dashboard"
+    ? "Mardi 24 octobre 2024"
+    : "Vue d’ensemble de l’espace de travail"
 );
 const activeSubheading = computed(() => {
   const subjects: Record<Exclude<Section, "Dashboard" | "Account" | "Login">, string> = {
@@ -167,7 +169,9 @@ const activeSubheading = computed(() => {
     return "Connectez-vous à l’espace d’administration de votre établissement.";
   }
 
-  return `Suivez et gérez les ${subjects[active.value]} de votre établissement au même endroit.`;
+  return `Suivez et gérez les ${
+    subjects[active.value]
+  } de votre établissement au même endroit.`;
 });
 const primaryActionLabel = computed(() => {
   if (active.value === "Attendance") return "Faire l’appel";
@@ -202,10 +206,15 @@ onMounted(() => {
       </div>
       <nav class="nav-list" aria-label="Navigation principale">
         <p class="nav-label">Espace de travail</p>
-        <button v-for="item in sections" :key="item.name" :class="['nav-item', { active: active === item.name }]" @click="nav(item.name)">
+        <button
+          v-for="item in sections"
+          :key="item.name"
+          :class="['nav-item', { active: active === item.name }]"
+          @click="nav(item.name)"
+        >
           <component :is="item.icon" :size="19" />
-            <span>{{ sectionLabels[item.name] }}</span>
-            <span v-if="item.name === 'Attendance'" class="nav-dot"></span>
+          <span>{{ sectionLabels[item.name] }}</span>
+          <span v-if="item.name === 'Attendance'" class="nav-dot"></span>
         </button>
       </nav>
       <div class="sidebar-bottom">
@@ -215,11 +224,11 @@ onMounted(() => {
           <button>Découvrir les offres <ArrowUpRight :size="14" /></button>
         </div>
         <button class="help"><CircleHelp :size="18" /> Centre d’aide</button>
-        <div class="user-mini">
+        <!-- <div class="user-mini">
           <div class="avatar purple">JD</div>
           <div><strong>Jordan Davis</strong><small>Administrateur scolaire</small></div>
           <MoreHorizontal :size="18" />
-        </div>
+        </div> -->
       </div>
     </aside>
     <div v-if="mobileOpen" class="scrim" @click="mobileOpen = false"></div>
@@ -229,11 +238,16 @@ onMounted(() => {
           <Menu :size="21" />
         </button>
         <div class="crumb">
-          <span>Espace de travail</span><span>/</span><strong>{{ sectionLabels[active] }}</strong>
+          <span>Espace de travail</span><span>/</span
+          ><strong>{{ sectionLabels[active] }}</strong>
         </div>
         <div class="top-actions">
           <div class="search-box">
-            <Search :size="17"/><input v-model="search" placeholder="Rechercher..." aria-label="Rechercher"/><kbd>⌘ K</kbd>
+            <Search :size="17" /><input
+              v-model="search"
+              placeholder="Rechercher..."
+              aria-label="Rechercher"
+            /><kbd>⌘ K</kbd>
           </div>
           <button class="icon-button notification"><Bell :size="19" /><i></i></button>
           <div class="top-avatar">JD</div>
@@ -261,7 +275,10 @@ onMounted(() => {
                 <div class="kpi-icon indigo"><Users :size="19" /></div>
                 <div class="kpi-title">Total des élèves <ArrowUpRight :size="15" /></div>
                 <strong>1,248</strong>
-                <p><b class="up">+8.2%</b> <span class="period-mobile">Ce mois-ci</span><span class="period-desktop">Par rapport au dernier mois</span></p>
+                <p>
+                  <b class="up">+8.2%</b> <span class="period-mobile">Ce mois-ci</span
+                  ><span class="period-desktop">Ce mois-ci</span>
+                </p>
                 <div class="sparkline indigo-line">
                   <span
                     v-for="h in [20, 27, 22, 34, 28, 42, 37, 51, 44, 61, 56, 75]"
@@ -274,7 +291,10 @@ onMounted(() => {
                 <div class="kpi-icon emerald"><UserRoundCheck :size="19" /></div>
                 <div class="kpi-title">Taux de présence <ArrowUpRight :size="15" /></div>
                 <strong>94.8%</strong>
-                <p><b class="up">+1.6%</b> <span class="period-mobile">Ce mois-ci</span><span class="period-desktop">Par rapport au dernier mois</span></p>
+                <p>
+                  <b class="up">+1.6%</b> <span class="period-mobile">Ce mois-ci</span
+                  ><span class="period-desktop">Ce mois-ci</span>
+                </p>
                 <div class="sparkline green-line">
                   <span
                     v-for="h in [34, 45, 38, 49, 42, 57, 48, 63, 57, 69, 64, 78]"
@@ -287,7 +307,10 @@ onMounted(() => {
                 <div class="kpi-icon amber"><CircleDollarSign :size="19" /></div>
                 <div class="kpi-title">Frais collectés <ArrowUpRight :size="15" /></div>
                 <strong>$428,650</strong>
-                <p><b class="up">+12.4%</b> <span class="period-mobile">Ce mois-ci</span><span class="period-desktop">Par rapport au dernier mois</span></p>
+                <p>
+                  <b class="up">+12.4%</b> <span class="period-mobile">Ce mois-ci</span
+                  ><span class="period-desktop">Ce mois-ci</span>
+                </p>
                 <div class="ring-wrap">
                   <svg viewBox="0 0 42 42">
                     <circle class="ring-bg" cx="21" cy="21" r="15.5" />
@@ -380,7 +403,9 @@ onMounted(() => {
                     <div>
                       <i class="dot green-dot"></i><span>Présents</span><b>1 184</b>
                     </div>
-                    <div><i class="dot amber-dot"></i><span>En retard</span><b>38</b></div>
+                    <div>
+                      <i class="dot amber-dot"></i><span>En retard</span><b>38</b>
+                    </div>
                     <div><i class="dot red-dot"></i><span>Absents</span><b>26</b></div>
                   </div>
                 </div>
@@ -526,13 +551,17 @@ onMounted(() => {
                 <h2>Présences quotidiennes</h2>
                 <p>Classe de 4e · Section A · Lundi 24 octobre</p>
               </div>
-              <button class="select-button">Aujourd’hui <ChevronDown :size="15" /></button>
+              <button class="select-button">
+                Aujourd’hui <ChevronDown :size="15" />
+              </button>
             </div>
             <div class="attendance-summary">
               <div>
                 <span class="dot green-dot"></span><b>Présents</b><strong>24</strong>
               </div>
-              <div><span class="dot amber-dot"></span><b>En retard</b><strong>2</strong></div>
+              <div>
+                <span class="dot amber-dot"></span><b>En retard</b><strong>2</strong>
+              </div>
               <div><span class="dot red-dot"></span><b>Absents</b><strong>1</strong></div>
             </div>
             <div class="attendance-list">
@@ -576,7 +605,9 @@ onMounted(() => {
                 <div class="kpi-icon amber"><Clock3 :size="19" /></div>
                 <div class="kpi-title">Impayé</div>
                 <strong>$119,350</strong>
-                <p><b class="warning-text">142 familles</b> <span>avec un solde dû</span></p>
+                <p>
+                  <b class="warning-text">142 familles</b> <span>avec un solde dû</span>
+                </p>
               </article>
             </div>
             <article class="panel chart-panel">
@@ -627,6 +658,9 @@ onMounted(() => {
               </div>
             </article>
           </section>
+
+          <!-- espace compte -->
+
           <section v-else-if="active === 'Account'" class="account-view">
             <article class="panel profile-panel">
               <div class="account-hero">
@@ -687,13 +721,22 @@ onMounted(() => {
               <form class="login-form">
                 <label>
                   <span>Email ou identifiant</span>
-                  <div><Mail :size="16" /><input type="email" placeholder="jordan.davis@masomo.ac" /></div>
+                  <div>
+                    <Mail :size="16" /><input
+                      type="email"
+                      placeholder="jordan.davis@masomo.ac"
+                    />
+                  </div>
                 </label>
                 <label>
                   <span>Mot de passe</span>
-                  <div><Lock :size="16" /><input type="password" placeholder="••••••••" /></div>
+                  <div>
+                    <Lock :size="16" /><input type="password" placeholder="••••••••" />
+                  </div>
                 </label>
-                <button class="button primary" type="button"><LogIn :size="16" /> Se connecter</button>
+                <button class="button primary" type="button">
+                  <LogIn :size="16" /> Se connecter
+                </button>
               </form>
             </article>
             <aside class="login-side">
@@ -706,7 +749,9 @@ onMounted(() => {
               <article class="stat-highlight">
                 <div>
                   <span>Indice de progression scolaire</span><strong>+18.6%</strong>
-                  <p><TrendingUp :size="15" /> En hausse par rapport au trimestre dernier</p>
+                  <p>
+                    <TrendingUp :size="15" /> En hausse par rapport au trimestre dernier
+                  </p>
                 </div>
                 <div class="predictive-line">
                   <svg viewBox="0 0 260 90" preserveAspectRatio="none">
